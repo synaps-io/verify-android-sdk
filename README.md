@@ -28,7 +28,7 @@ maven {
 ```kotlin
 dependencies {
 ...
-    implementation("com.github.synaps-io:verify-android-sdk:0.2.0")
+    implementation("com.github.synaps-io:verify-android-sdk:0.3.0")
 }
 ```
 
@@ -39,6 +39,15 @@ dependencies {
 
 By default, when opening the Verify sdk screen, [Camera](https://developer.android.com/reference/android/Manifest.permission#CAMERA) and [NFC](https://developer.android.com/reference/android/Manifest.permission#NFC) permissions will be requested if they have not already been granted. You are free to make the request before opening Verify to integrate it into your user experience.
 More information about requesting permission in the [Android documentation](https://developer.android.com/training/permissions/requesting)
+
+Please note that NFC may not be available on some devices. This will be particularly true for emulators. To check whether the device supports NFC, try to find the NfcAdapter. If it's null, then the device doesn't support NFC.
+More information about NfcAdapter in the [Android documentation](https://developer.android.com/reference/android/nfc/NfcAdapter#getDefaultAdapter(android.content.Context))
+```kotlin
+val adapter: NfcAdapter? = NfcAdapter.getDefaultAdapter(context)
+// OR
+val manager: NfcManager = context.getSystemService(Context.NFC_SERVICE) as NfcManager
+val adapter: NfcAdapter? = manager.getDefaultAdapter()
+```
 
 ## Compose
 Verify SDK provide a simple way to use our service with Android Compose. Just call the VerifyView composable function. A session ID is required.
@@ -115,6 +124,19 @@ You can also use [Android Jetpack Navigation](https://developer.android.com/guid
 	android:name="tier"
 	app:argType="string"/>
 ```
+
+## Common
+
+It is possible to display a specific log level in Logcat. By default, logs are disabled with `LogType.NONE`.
+To enable logs :
+```kotlin
+Verify.logType = LogType.DEBUG
+```
+### LogType list :
+- `LogType.NONE`
+- `LogType.WARNING`
+- `LogType.ERROR`
+- `LogType.DEBUG`
 
 ## License
 
