@@ -28,7 +28,7 @@ maven {
 ```kotlin
 dependencies {
 ...
-    implementation("com.github.synaps-io:verify-android-sdk:0.3.0")
+    implementation("com.github.synaps-io:verify-android-sdk:0.4.0")
 }
 ```
 
