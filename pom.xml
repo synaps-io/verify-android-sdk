@@ -10,7 +10,6 @@
     <groupId>io.synaps</groupId>
     <artifactId>verify-sdk</artifactId>
     <version>0.4.0</version>
-    <packaging>aar</packaging>
     <dependencies>
         <dependency>
             <groupId>androidx.databinding</groupId>
