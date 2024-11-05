@@ -3,13 +3,15 @@
 > Synaps Android Verify SDK
 
 [![](https://jitpack.io/v/synaps-hub/verify-android.svg)](https://jitpack.io/#synaps-hub/verify-android)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License][license-image]][license-url]
 
 **Synaps is an all-in-one compliance platform**. It offers a simple, fast and secure way to meet compliance requirements at scale.
 
 [Visit Synaps.io](https://synaps.io) | [Read the Synaps documentation](https://docs.synaps.io)
 
-![enter image description here](https://storage.googleapis.com/synaps-docs-media/synaps-verify.png)
+<div align=center>
+	<img width="55%" src=media/synaps-verify.jpeg>
+</div>
 
 ## Gradle Dependency
 To get a Git project into your build:
@@ -28,7 +30,7 @@ maven {
 ```kotlin
 dependencies {
 ...
-    implementation("com.github.synaps-io:verify-android-sdk:0.5.0")
+    implementation("com.github.synaps-io:verify-android-sdk:0.6.0")
 }
 ```
 
@@ -125,6 +127,58 @@ You can also use [Android Jetpack Navigation](https://developer.android.com/guid
 	app:argType="string"/>
 ```
 
+## Fragment (view legacy)
+
+If you want more flexibility in using the power of fragments, you can create an instance of `VerifyFragment with the parameters you want to integrate. Once created, simply add the fragment instance to your navigation stack.
+
+### Kotlin  Usage:
+```kotlin
+val fragment = VerifyFragment.newInstance(
+	sessionId = binding.editText.text.toString(),
+	lang = VerifyLang.FRENCH,
+	tier = "...",
+	delegate = object : VerifyFragmentDelegate {
+		override fun onReady() {
+			...
+		}
+
+		override fun onFinish() {
+			...
+		}
+	}
+)
+
+requireActivity().supportFragmentManager
+	.beginTransaction()
+	.replace(R.id.container, fragment)
+	.commitNow()
+```
+
+### Attributes list
+
+| Attribute name | Attribute type | Default | Required | Description |
+| ------------------ |----------------| ------- | -------- | ----------------------------------------------------------------------------- |
+| `sessionId`  | `string`       | `''`  | Yes  | Session can be referred as a customer verification session. [More info](https://help.synaps.io/manager-1/sessions) |
+| `lang` | `VerifyLang`   | `VerifyLang.ENGLISH` | No | Event listener called on every open/close action |
+| `tier` | `string`       | `null` | No | Tier is a simply way to divide your workflow into small pieces. It is very useful when you offer different features based on the verification level of your customer. [More info](https://docs.synaps.io/manager-1/apps/individual/tiers) |
+| `delegate` | `VerifyFragmentDelegate`   | `null` | No  | An object to pass callbacks to the fragment, such as `onReady` or `onFinish  |
+
+If you want to take advantage of the NFC feature, it's important to override the [`onNewIntent`](https://developer.android.com/reference/android/app/Activity#onNewIntent(android.content.Intent)) method of the activity that hosts the fragment and call `onNewIntent` of `VerifyFragment` to transmit the intent containing the nfc packets to the SDK.
+### Kotlin sample:
+```kotlin
+class SampleActivity : Activity() {
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        supportFragmentManager.fragments.forEach { fragment: Fragment ->
+            if (fragment is VerifyFragment && fragment.isVisible) {
+                fragment.onNewIntent(intent)
+            }
+        }
+    }
+}
+```
+
+
 ## Common
 
 It is possible to display a specific log level in Logcat. By default, logs are disabled with `LogType.NONE`.
@@ -140,4 +194,7 @@ Verify.logType = LogType.DEBUG
 
 ## License
 
-Apache 2.0 © [Synaps](https://www.synaps.io/)
+BSD 3-Clause © [Synaps](https://www.synaps.io/)
+
+[license-image]: https://img.shields.io/github/license/synaps-io/verify-ios-sdk?color=blue
+[license-url]: LICENSE
